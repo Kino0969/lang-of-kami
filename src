@@ -1,0 +1,49 @@
+import java.io.IOException;
+import java.util.Scanner;
+//soup
+import org.jsoup.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+//download image
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.io.File;
+public class final_110716033 {
+	public static void main(String args[]) throws Exception{
+		int count = 1;
+		String basic = "https://nhentai.net/g/";
+		String extension = ".jpg";
+		System.out.print("請輸入神的語言: ");
+		Scanner i = new Scanner(System.in);
+		String s = i.nextLine();
+		//String s = "203112";//.nextLine();
+		File image_path = new File("D://books//"+s);
+		String complete = basic+s;
+		Document doc = Jsoup.connect(complete).get();
+		Elements image = doc.select("img");
+		image_path.mkdirs();
+		for(Element src:image) {
+			if(src.attr("src").equals("https://static.nhentai.net/img/logo.650c98bbb08e.svg")||src.attr("src").equals("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")||src.attr("src").equals("//t.nhentai.net/galleries/792816/thumb.jpg")) {
+				continue;
+			}
+			if(src.attr("src").length()>47) {//第40個字，不包含41
+				if(src.attr("src").substring(40,41).equals("t")) {
+					continue;
+				}
+			}else {
+				if(!src.attr("src").substring(23,24).equals("a")) {
+					continue;
+				}
+			}
+			System.out.println("image: "+src.attr("src"));
+			BufferedImage imaged = null;
+			URL url = new URL(src.attr("src"));
+			imaged = ImageIO.read(url);
+			ImageIO.write(imaged,"jpg",new File(("D://books//"+s+"//")+count+extension));
+			count++;
+		}
+		System.out.println("successful");
+	}
+}
